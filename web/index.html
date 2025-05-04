@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <base href="$FLUTTER_BASE_HREF">
+
+      <meta charset="UTF-8">
+      <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+      <meta name="description" content="A new Flutter project.">
+
+      <!-- iOS meta tags & icons -->
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-status-bar-style" content="black">
+      <meta name="apple-mobile-web-app-title" content="persistent_project">
+      <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+      <!-- Favicon -->
+      <link rel="icon" type="image/png" href="favicon.png"/>
+
+      <title>real_estate_app</title>
+      <link rel="manifest" href="manifest.json">
+
+      <style>
+          body {
+            background: #000;
+            margin: 0;
+            overflow: hidden;
+          }
+
+          #loading-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+          }
+
+          .loader {
+            border: 6px solid rgba(255, 255, 255, 0.2);
+            border-top: 6px solid #87CEEB;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+          }
+
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+      </style>
+
+  </head>
+  <body style="background-color: black; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+  <!-- Loader Container -->
+  <div id="loading-container">
+      <div class="loader"></div>
+  </div>
+
+  <script src="flutter.js" defer></script>
+
+  <script>
+      var scriptLoaded = false;
+
+      function loadMainDartJs() {
+        if (scriptLoaded) return;
+        scriptLoaded = true;
+
+        const scriptTag = document.createElement('script');
+
+        // Check if we're in dev mode based on hostname and try to load dev script
+        const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        const entryDev = 'web_entrypoint.dart.js';
+        const entryProd = 'main.dart.js';
+
+        // Try loading dev file first (safely), then fallback to prod
+        fetch(entryDev, { method: 'HEAD' })
+          .then(response => {
+            scriptTag.src = response.ok ? entryDev : entryProd;
+            scriptTag.type = 'application/javascript';
+            document.body.appendChild(scriptTag);
+          })
+          .catch(_ => {
+            scriptTag.src = entryProd;
+            scriptTag.type = 'application/javascript';
+            document.body.appendChild(scriptTag);
+          });
+      }
+
+      function removeLoader() {
+        const loader = document.getElementById('loading-container');
+        if (loader) loader.style.display = "none";
+      }
+
+      // Remove loader when Flutter signals first frame
+    window.addEventListener('flutter-first-frame', function () {
+      console.log('[DEBUG] Flutter first frame rendered.');
+      removeLoader();
+      console.log('[DEBUG] Flutter loader removed.');
+    });
+
+      loadMainDartJs();
+  </script>
+
+  </body>
+  </html>
